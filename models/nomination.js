@@ -1,7 +1,12 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose, { Schema, model, models } from 'mongoose';
 import { categoryArray } from './category';
+import moment from 'moment-timezone';
 
-const awardEnum = categoryArray();
+const getCurrentDateInMelbourne = () => {
+  return moment().tz('Australia/Melbourne').format('YYYY-MM-DD HH:mm');
+};
+
+const awardEnum = categoryArray;
 
 const NominationSchema = new Schema({
   recipientUser: {
@@ -38,6 +43,7 @@ const NominationSchema = new Schema({
   nominationDate: {
     type: String,
     required: true,
+    default: getCurrentDateInMelbourne,
   },
   isNominatorFullUser: {
     type: Boolean,
@@ -62,7 +68,13 @@ const NominationSchema = new Schema({
   releasedDate: {
     type: String,
     required: false,
-  },
+    validate: {
+      validator: function(v) {
+      return moment(v, 'YYYY-MM-DD HH:mm', true).isValid()
+      },
+      message: props => `${props.value} is not a valid date. Please provide a date in the format 'YYYY-MM-DD HH:mm' using 24 hours time.`
+    },
+  }
 });
 
 const Nomination = models.Nomination || model('Nomination', NominationSchema);

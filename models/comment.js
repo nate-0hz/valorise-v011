@@ -1,13 +1,14 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose, { Schema, model, models } from 'mongoose';
+import moment from 'moment-timezone';
 
 const CommentSchema = new Schema({
   nominationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref 'Nomination',
+    ref: 'Nomination',
     required: true,
   },
   commenterId: {
-    type: mongoose.Schema.Types.OjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
@@ -17,10 +18,15 @@ const CommentSchema = new Schema({
   },
   commentDate: {
     type: String,
-    required: true,
+    validate: {
+      validator: function(v) {
+      return moment(v, 'YYYY-MM-DD HH:mm', true).isValid()
+      },
+      message: props => `${props.value} is not a valid date. Please provide a date in the format 'YYYY-MM-DD HH:mm' using 24 hours time.`
+    },
   }
 });
 
-const Comment = models.Comment || model("Comment", CommentSchema);
+const Comment = models.Comment || model('Comment', CommentSchema);
 
 export default Comment;

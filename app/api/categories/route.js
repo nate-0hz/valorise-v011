@@ -18,8 +18,8 @@ export const POST = async (request) => {
       });
 
       await newCategory.save();
-      return new Response(JSON.stringify(newCategory), {status: 201})
+      return new Response(JSON.stringify(newCategory), { status: 201 })
     } catch (error) {
-      return new Response("Failed to create new category", { status: 500 });
+      return new Response("Failed to create category.", { status: 500 });
     }
 }
